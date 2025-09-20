@@ -15,7 +15,7 @@ const PORT = process.env.PORT;
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("Connected to DB");
+    console.log("Successfully connected to MongoDB!");
     app.listen(PORT, () => {
       console.log(`Server is listening on port ${PORT}`);
     });
