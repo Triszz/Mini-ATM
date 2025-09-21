@@ -58,6 +58,26 @@ AccountSchema.methods.withdraw = async function (amount, pin) {
   return this.balance;
 };
 
+AccountSchema.methods.transfer = async function (
+  receiverAccountNumber,
+  amount,
+  pin
+) {
+  await this.isValidPin(pin);
+  const receiver = await mongoose
+    .model("Account")
+    .findOne({ accountNumber: receiverAccountNumber });
+  if (!receiver) {
+    throw Error("Receiver account is not found!");
+  }
+  if (this.balance < amount) {
+    throw Error("Insufficient funds");
+  }
+  receiver.balance += amount;
+  await receiver.save();
+  this.balance -= amount;
+  return this.balance;
+};
 AccountSchema.methods.deposit = async function (amount, pin) {
   await this.isValidPin(pin);
   this.balance += amount;

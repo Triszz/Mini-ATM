@@ -1,4 +1,5 @@
 const Account = require("../models/account.model");
+const Transaction = require("../models/transaction.model");
 const jwt = require("jsonwebtoken");
 
 // create token
@@ -82,16 +83,101 @@ const withdraw = async (req, res) => {
     if (!account) {
       return res.status(404).json({ message: "Account is not found!" });
     }
-    const balance = await account.withdraw(amount, pin);
+    const balanceBefore = account.getBalance();
+    const balanceAfter = await account.withdraw(amount, pin);
     await account.save();
+    const transaction = await Transaction.create({
+      sender: accountNumber,
+      receiver: accountNumber,
+      type: "withdrawal",
+      amount: amount,
+      content: `ATM withdrawal of $${amount}`,
+      balanceBefore: balanceBefore,
+      balanceAfter: balanceAfter,
+    });
     res.status(200).json({
       success: true,
       message: "Withdrawal successful",
       data: {
+        transactionId: transaction._id,
         transactionType: "withdrawal",
         amount: parseFloat(amount),
-        newBalance: balance,
-        transactionTime: new Date(),
+        newBalance: balanceAfter,
+        transactionTime: transaction.createdAt,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// transfer
+const transfer = async (req, res) => {
+  try {
+    const { senderAccountNumber } = req.params;
+    const {
+      receiverAccountNumber,
+      amount,
+      pin,
+      content = `${senderAccountNumber} transfers`,
+    } = req.body;
+    if (!receiverAccountNumber) {
+      return res.status(400).json({
+        message: "Receiver account number is required",
+      });
+    }
+    if (senderAccountNumber === receiverAccountNumber) {
+      return res.status(400).json({
+        message: "Cannot transfer to your own account",
+      });
+    }
+    if (!amount) {
+      return res.status(400).json({ message: "Amount is required" });
+    }
+    if (!pin) {
+      return res.status(400).json({ message: "PIN is required" });
+    }
+    if (amount <= 0) {
+      return res.status(400).json({
+        message: "Amount must be greater than 0",
+      });
+    }
+
+    const account = await Account.findOne({
+      accountNumber: senderAccountNumber,
+    });
+
+    if (!account) {
+      return res.status(404).json({
+        message: "Account is not found!",
+      });
+    }
+
+    const balanceBefore = account.getBalance();
+    const balanceAfter = await account.transfer(
+      receiverAccountNumber,
+      amount,
+      pin
+    );
+    await account.save();
+    const transaction = await Transaction.create({
+      sender: senderAccountNumber,
+      receiver: receiverAccountNumber,
+      type: "transfer",
+      amount: amount,
+      content: content,
+      balanceBefore: balanceBefore,
+      balanceAfter: balanceAfter,
+    });
+    res.status(200).json({
+      success: true,
+      message: "Transfer successful",
+      data: {
+        transactionId: transaction._id,
+        transactionType: "transfer",
+        amount: parseFloat(amount),
+        newBalance: balanceAfter,
+        transactionTime: transaction.createdAt,
       },
     });
   } catch (error) {
@@ -107,26 +193,69 @@ const deposit = async (req, res) => {
     if (!amount || !pin) {
       return res.status(400).json({ message: "Amount and PIN are required" });
     }
+    if (amount <= 0) {
+      return res.status(400).json({
+        message: "Amount must be greater than 0",
+      });
+    }
     const account = await Account.findOne({ accountNumber });
     if (!account) {
       return res.status(404).json({ message: "Account is not found!" });
     }
-    const balance = await account.deposit(amount, pin);
+    const balanceBefore = account.getBalance();
+    const balanceAfter = await account.deposit(amount, pin);
     await account.save();
+    const transaction = await Transaction.create({
+      sender: accountNumber,
+      receiver: accountNumber,
+      type: "deposit",
+      amount: amount,
+      content: `ATM deposit of $${amount}`,
+      balanceBefore: balanceBefore,
+      balanceAfter: balanceAfter,
+    });
     res.status(200).json({
       success: true,
       message: "Deposit successful",
       data: {
+        transactionId: transaction._id,
         transactionType: "deposit",
         amount: parseFloat(amount),
-        newBalance: balance,
-        transactionTime: new Date(),
+        newBalance: balanceAfter,
+        transactionTime: transaction.createdAt,
       },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+// get transaction history
+const getTransactionHistory = async (req, res) => {
+  try {
+    const { accountNumber } = req.params;
+    const { limit = 10, page = 1, type } = req.query;
+    const history = await Transaction.getTransactionHistory(
+      accountNumber,
+      parseInt(limit),
+      parseInt(page),
+      type
+    );
+    res.status(200).json({
+      success: true,
+      transactions: history.transactions,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: history.total,
+        pages: history.pages,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAccount,
   signupAccount,
@@ -134,4 +263,6 @@ module.exports = {
   getBalance,
   withdraw,
   deposit,
+  getTransactionHistory,
+  transfer,
 };
