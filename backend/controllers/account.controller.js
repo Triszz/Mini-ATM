@@ -115,12 +115,7 @@ const withdraw = async (req, res) => {
 const transfer = async (req, res) => {
   try {
     const { senderAccountNumber } = req.params;
-    const {
-      receiverAccountNumber,
-      amount,
-      pin,
-      content = `${senderAccountNumber} transfers`,
-    } = req.body;
+    const { receiverAccountNumber, amount, pin } = req.body;
     if (!receiverAccountNumber) {
       return res.status(400).json({
         message: "Receiver account number is required",
@@ -131,6 +126,7 @@ const transfer = async (req, res) => {
         message: "Cannot transfer to your own account",
       });
     }
+
     if (!amount) {
       return res.status(400).json({ message: "Amount is required" });
     }
@@ -152,7 +148,7 @@ const transfer = async (req, res) => {
         message: "Account is not found!",
       });
     }
-
+    const { content = `${account.username} transfers` } = req.body;
     const balanceBefore = account.getBalance();
     const balanceAfter = await account.transfer(
       receiverAccountNumber,
@@ -175,6 +171,7 @@ const transfer = async (req, res) => {
       data: {
         transactionId: transaction._id,
         transactionType: "transfer",
+        content: content,
         amount: parseFloat(amount),
         newBalance: balanceAfter,
         transactionTime: transaction.createdAt,
