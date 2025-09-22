@@ -51,21 +51,6 @@ const loginAccount = async (req, res) => {
   }
 };
 
-// get balance
-const getBalance = async (req, res) => {
-  try {
-    const { accountNumber } = req.params;
-    const account = await Account.findOne({ accountNumber });
-    if (!account) {
-      return res.status(404).json({ message: "Account is not found!" });
-    }
-    const balance = await account.getBalance();
-    res.status(200).json(balance);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
 // withdraw
 const withdraw = async (req, res) => {
   try {
@@ -252,14 +237,37 @@ const getTransactionHistory = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
+const changeBalanceState = async (req, res) => {
+  try {
+    const { accountNumber } = req.params;
+    const { isBalanceHide } = req.body;
+    const account = await Account.findOneAndUpdate(
+      { accountNumber },
+      { isBalanceHide },
+      { new: true }
+    );
+    if (!account) {
+      return res.status(404).json({
+        message: "Account is not found!",
+      });
+    }
+    const { password, pin, ...safeAccount } = account.toObject();
+    res.status(200).json({
+      success: true,
+      message: "Balance visibility updated",
+      data: safeAccount,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = {
   getAccount,
   signupAccount,
   loginAccount,
-  getBalance,
   withdraw,
   deposit,
   getTransactionHistory,
   transfer,
+  changeBalanceState,
 };

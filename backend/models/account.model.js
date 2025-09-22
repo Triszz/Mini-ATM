@@ -29,6 +29,10 @@ const AccountSchema = mongoose.Schema(
       type: String,
       unique: true,
     },
+    isBalanceHide: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
@@ -47,6 +51,10 @@ AccountSchema.methods.isValidPin = async function (pin) {
 
 AccountSchema.methods.getBalance = function () {
   return this.balance;
+};
+
+AccountSchema.methods.getUsername = function () {
+  return this.username;
 };
 
 AccountSchema.methods.withdraw = async function (amount, pin) {
