@@ -11,13 +11,13 @@ function Login() {
       setIsLoading(true);
       const response = await AccountAPI.login(email, password);
       console.log(response.data);
+      setEmail("");
+      setPassword("");
     } catch (error) {
       setError("Fail to login");
       console.error("Error logging", error);
     } finally {
       setIsLoading(false);
-      setEmail("");
-      setPassword("");
     }
   };
   if (error) {

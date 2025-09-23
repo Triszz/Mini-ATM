@@ -1,10 +1,17 @@
+import { Link } from "react-router";
 function Header() {
   return (
     <div className="header">
-      <h1 className="title">Mini ATM</h1>
+      <Link to="/" className="title">
+        Mini ATM
+      </Link>
       <div className="button-container">
-        <button className="button login">Login</button>
-        <button className="button signup">Signup</button>
+        <Link to="/login" className="button login">
+          Login
+        </Link>
+        <Link to="/signup" className="button signup">
+          Signup
+        </Link>
       </div>
     </div>
   );

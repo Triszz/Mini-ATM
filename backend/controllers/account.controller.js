@@ -27,12 +27,9 @@ const getAccount = async (req, res) => {
 // signup
 const signupAccount = async (req, res) => {
   try {
-    const { email } = req.body;
     const account = await Account.signup(req.body);
-    // create token
-    const token = createToken(account.accountNumber);
-
-    res.status(201).json({ email, token });
+    const { password, pin, ...safeAccount } = account.toObject();
+    res.status(201).json({ safeAccount });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
