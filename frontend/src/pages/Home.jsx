@@ -1,5 +1,6 @@
 import { AccountAPI } from "../services/api";
 import { useState, useEffect } from "react";
+import { Link } from "react-router";
 function Home() {
   const [username, setUsername] = useState("");
   const [balance, setBalance] = useState(0);
@@ -11,7 +12,7 @@ function Home() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await AccountAPI.getAccount("328812255");
+        const response = await AccountAPI.getAccount("269997912");
         setUsername(response.data.username);
         setBalance(response.data.balance);
         setAccountNumber(response.data.accountNumber);
@@ -45,15 +46,35 @@ function Home() {
   }
   return (
     <div className="home">
-      <h2 className="welcome">
-        Welcome, <strong>{username}</strong>
-      </h2>
-      <h3 className="account-number">{accountNumber}</h3>
-      <div className="balance-container">
-        <h2 className="balance">{isBalanceHide ? "*****" : balance} VND</h2>
-        <button className="display-balance-button" onClick={handleClick}>
-          <i className={`fa-solid fa-eye${isBalanceHide ? "" : "-slash"}`}></i>
-        </button>
+      <div className="main-container">
+        <div className="user-info">
+          <h2 className="welcome">
+            Welcome, <strong>{username}</strong>
+          </h2>
+          <h3 className="account-number">{accountNumber}</h3>
+          <div className="balance-container">
+            <h2 className="balance">{isBalanceHide ? "*****" : balance} VND</h2>
+            <button className="display-balance-button" onClick={handleClick}>
+              <i
+                className={`fa-solid fa-eye${isBalanceHide ? "" : "-slash"}`}
+              ></i>
+            </button>
+          </div>
+        </div>
+        <div className="action-container">
+          <Link to="/withdraw" className="action withdraw">
+            Withdraw
+          </Link>
+          <Link to="/deposit" className="action deposit">
+            Deposit
+          </Link>
+          <Link to="/transfer" className="action transfer">
+            Transfer
+          </Link>
+          <Link to="/history" className="action history">
+            Transaction History
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     try {
       setIsLoading(true);
 
@@ -68,8 +69,8 @@ function Signup() {
         <button type="submit" className="button login">
           Signup
         </button>
-        {isLoading && <div className="loading">Loading...</div>}
       </form>
+      {isLoading && <div className="loading">Loading...</div>}
       {error && <div className="error">Error: {error}</div>}
     </div>
   );
