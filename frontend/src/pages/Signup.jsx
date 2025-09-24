@@ -26,7 +26,10 @@ function Signup() {
       setPassword("");
       setPin("");
     } catch (error) {
-      const errorMessage = error.response?.data?.error || error.message;
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message;
       setError(errorMessage);
       console.error("Error signup: ", error);
     } finally {
@@ -44,6 +47,7 @@ function Signup() {
           className="username-input"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          autoFocus
         />
         <label>Email: </label>
         <input

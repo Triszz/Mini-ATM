@@ -14,18 +14,17 @@ function Login() {
       setEmail("");
       setPassword("");
     } catch (error) {
-      setError("Fail to login");
-      console.error("Error logging", error);
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.message;
+      setError(errorMessage);
+      console.error("Error login: ", error);
     } finally {
       setIsLoading(false);
     }
   };
-  if (error) {
-    return <div className="error">Error: {error}</div>;
-  }
-  if (isLoading) {
-    return <div className="loading">Loading...</div>;
-  }
+
   return (
     <div className="login-container">
       <h1>Login</h1>
@@ -36,6 +35,7 @@ function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="email-input"
+          autoFocus
         />
 
         <label>Password: </label>
@@ -50,6 +50,8 @@ function Login() {
           Login
         </button>
       </form>
+      {isLoading && <div className="loading">Loading...</div>}
+      {error && <div className="error">Error: {error}</div>}
     </div>
   );
 }

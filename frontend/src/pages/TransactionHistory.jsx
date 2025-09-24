@@ -36,8 +36,8 @@ function TransactionHistory() {
             <span>Amount: {transaction.amount}</span>
             <span>Status: {transaction.status}</span>
             <span>Content: {transaction.content}</span>
-            <span>Balance before: {transaction.balanceBefore}</span>
-            <span>Balance after: {transaction.balanceAfter}</span>
+            <span>Balance before: ${transaction.balanceBefore}</span>
+            <span>Balance after: ${transaction.balanceAfter}</span>
             <span>Date: {formatTimestamp(transaction.createdAt)}</span>
           </li>
         ))}

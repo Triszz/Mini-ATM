@@ -50,7 +50,6 @@
 .home {
   padding: 40px;
   display: flex;
-
   justify-content: center;
 }
 .main-container {
@@ -189,14 +188,16 @@
   flex-direction: column;
   justify-content: center;
   margin-top: 10px;
+  margin-bottom: 10px;
 }
-.login-form label {
-  margin-top: 10px;
+.login-form label,
+.signup-form label {
+  margin-top: 15px;
 }
 
 .login-form .button.login,
 .signup-form .button.login {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .signup-container {
@@ -211,9 +212,7 @@
 .signup-form {
   display: flex;
   flex-direction: column;
-}
-.signup-form label {
-  padding-top: 10px;
+  margin-top: 10px;
 }
 
 .transaction-history {
@@ -244,4 +243,40 @@
   border: 1px solid #ddd;
   background: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.withdraw-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 0;
+  gap: 15px;
+}
+.withdraw-form {
+  display: flex;
+  flex-direction: column;
+}
+.withdraw-form label {
+  margin-top: 15px;
+}
+.withdraw-button {
+  margin-top: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 8px 12px;
+  margin: 8px 0 8px 0;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #ffffff;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+input:focus {
+  border-color: #388dee;
+  background-color: #fafbfc;
 }

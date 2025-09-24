@@ -53,7 +53,7 @@ function Home() {
           </h2>
           <h3 className="account-number">{accountNumber}</h3>
           <div className="balance-container">
-            <h2 className="balance">{isBalanceHide ? "*****" : balance} VND</h2>
+            <h2 className="balance">${isBalanceHide ? "*****" : balance}</h2>
             <button className="display-balance-button" onClick={handleClick}>
               <i
                 className={`fa-solid fa-eye${isBalanceHide ? "" : "-slash"}`}
