@@ -33,7 +33,7 @@ function Withdraw() {
     <div className="withdraw-container">
       <h1>Withdrawal</h1>
       <form className="withdraw-form" onSubmit={handleSubmit}>
-        <label>Amount: </label>
+        <label>Amount ($): </label>
         <input
           type="text"
           className="amount-input"

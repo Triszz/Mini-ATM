@@ -1,28 +1,14 @@
 import { useState } from "react";
 import { AccountAPI } from "../services/api";
+import { useLogin } from "../hooks/useLogin";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { login, error, isLoading } = useLogin();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setIsLoading(true);
-      const response = await AccountAPI.login(email, password);
-      console.log(response.data);
-      setEmail("");
-      setPassword("");
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error ||
-        error.response?.data?.message ||
-        error.message;
-      setError(errorMessage);
-      console.error("Error login: ", error);
-    } finally {
-      setIsLoading(false);
-    }
+    await login(email, password);
   };
 
   return (
