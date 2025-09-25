@@ -5,9 +5,11 @@ export const AuthContext = createContext();
 export const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
-      return { user: action.payload };
+      return { user: action.payload, isInitialized: true };
     case "LOGOUT":
-      return { user: null };
+      return { user: null, isInitialized: true };
+    case "INITIALIZE":
+      return { ...state, isInitialized: true };
     default:
       return state;
   }
@@ -15,12 +17,30 @@ export const authReducer = (state, action) => {
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
     user: null,
+    isInitialized: false,
   });
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user) {
-      dispatch({ type: "LOGIN", payload: user });
-    }
+    const initializeAuth = () => {
+      try {
+        const userString = localStorage.getItem("user");
+        if (userString) {
+          const user = JSON.parse(userString);
+          if (user?.token) {
+            dispatch({ type: "LOGIN", payload: user });
+          } else {
+            dispatch({ type: "INITIALIZE" });
+          }
+        } else {
+          dispatch({ type: "INITIALIZE" });
+        }
+      } catch (error) {
+        console.error("Auth initialization error:", error);
+        localStorage.removeItem("user");
+        dispatch({ type: "INITIALIZE" });
+      }
+    };
+
+    initializeAuth();
   }, []);
   console.log("AuthContext state: ", state);
   return (

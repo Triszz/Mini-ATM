@@ -5,7 +5,7 @@ function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuthContext();
+  const { user, isInitialized } = useAuthContext();
   useEffect(() => {
     const fetchTransactionHistory = async () => {
       try {
@@ -22,17 +22,17 @@ function TransactionHistory() {
         setIsLoading(false);
       }
     };
-    const timer = setTimeout(() => {
-      if (user) {
-        fetchTransactionHistory();
-      } else {
-        setError("Please login to continue");
-        setIsLoading(false);
-      }
-    }, 100);
+    if (!isInitialized) {
+      return;
+    }
+    if (user) {
+      fetchTransactionHistory();
+    } else {
+      setError("Please login to continue");
+      setIsLoading(false);
+    }
+  }, [user, isInitialized]);
 
-    return () => clearTimeout(timer);
-  }, [user]);
   const formatTimestamp = useCallback((mongoTimestamp) => {
     const date = new Date(mongoTimestamp);
     const dateString = date.toLocaleDateString("vi-VN", {
