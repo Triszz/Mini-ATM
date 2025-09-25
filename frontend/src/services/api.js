@@ -8,6 +8,19 @@ const api = axios.create({
   },
 });
 
+const getAuthHeaders = () => {
+  try {
+    const userString = localStorage.getItem("user");
+    if (!userString) return {};
+
+    const user = JSON.parse(userString);
+    return user.token ? { Authorization: `Bearer ${user.token}` } : {};
+  } catch (error) {
+    console.error("Error parsing user from localStorage:", error);
+    return {};
+  }
+};
+
 export const AccountAPI = {
   // login
   login: (email, password) => api.post("/login", { email, password }),
@@ -16,31 +29,61 @@ export const AccountAPI = {
   signup: (data) => api.post("/signup", data),
 
   // get account
-  getAccount: (accountNumber) => api.get(`${accountNumber}`),
+  getAccount: (accountNumber) =>
+    api.get(`${accountNumber}`, {
+      headers: getAuthHeaders(),
+    }),
 
   // withdraw
   withdraw: (accountNumber, amount, pin) =>
-    api.post(`/${accountNumber}/withdraw`, { amount, pin }),
+    api.post(
+      `/${accountNumber}/withdraw`,
+      { amount, pin },
+      {
+        headers: getAuthHeaders(),
+      }
+    ),
 
   // transfer
   transfer: (accountNumber, receiverAccountNumber, amount, pin) =>
-    api.post(`/${accountNumber}/transfer`, {
-      receiverAccountNumber,
-      amount,
-      pin,
-    }),
+    api.post(
+      `/${accountNumber}/transfer`,
+      {
+        receiverAccountNumber,
+        amount,
+        pin,
+      },
+      {
+        headers: getAuthHeaders(),
+      }
+    ),
 
   // deposit
   deposit: (accountNumber, amount, pin) =>
-    api.post(`/${accountNumber}/deposit`, { amount, pin }),
+    api.post(
+      `/${accountNumber}/deposit`,
+      { amount, pin },
+      {
+        headers: getAuthHeaders(),
+      }
+    ),
 
   // get transaction history
   getTransactionHistory: (accountNumber, limit, page, type) =>
-    api.get(`${accountNumber}/history`, { params: { limit, page, type } }),
+    api.get(`${accountNumber}/history`, {
+      params: { limit, page, type },
+      headers: getAuthHeaders(),
+    }),
 
   // change balance state
   changeBalanceState: (accountNumber, isBalanceHide) =>
-    api.put(`${accountNumber}/balance-state`, { isBalanceHide }),
+    api.put(
+      `${accountNumber}/balance-state`,
+      { isBalanceHide },
+      {
+        headers: getAuthHeaders(),
+      }
+    ),
 };
 
 export default api;

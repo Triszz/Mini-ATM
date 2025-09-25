@@ -1,6 +1,7 @@
 import { AccountAPI } from "../services/api";
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
+import { useAuthContext } from "../hooks/useAuthContext";
 function Home() {
   const [username, setUsername] = useState("");
   const [balance, setBalance] = useState(0);
@@ -8,6 +9,7 @@ function Home() {
   const [isBalanceHide, setIsBalanceHide] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuthContext();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,8 +30,17 @@ function Home() {
         setIsLoading(false);
       }
     };
-    fetchData();
-  }, []);
+    const timer = setTimeout(() => {
+      if (user) {
+        fetchData();
+      } else {
+        setError("Please login to continue");
+        setIsLoading(false);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [user]);
 
   const handleClick = async () => {
     try {

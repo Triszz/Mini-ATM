@@ -1,14 +1,38 @@
 import { useState, useEffect, useCallback } from "react";
 import { AccountAPI } from "../services/api";
+import { useAuthContext } from "../hooks/useAuthContext";
 function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuthContext();
   useEffect(() => {
     const fetchTransactionHistory = async () => {
-      const response = await AccountAPI.getTransactionHistory("269997912");
-      setTransactions(response.data.transactions);
+      try {
+        setIsLoading(true);
+        const response = await AccountAPI.getTransactionHistory("269997912");
+        setTransactions(response.data.transactions);
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          error.message;
+        setError(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    fetchTransactionHistory();
-  }, []);
+    const timer = setTimeout(() => {
+      if (user) {
+        fetchTransactionHistory();
+      } else {
+        setError("Please login to continue");
+        setIsLoading(false);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [user]);
   const formatTimestamp = useCallback((mongoTimestamp) => {
     const date = new Date(mongoTimestamp);
     const dateString = date.toLocaleDateString("vi-VN", {
@@ -24,6 +48,12 @@ function TransactionHistory() {
     });
     return `${dateString} ${timeString}`;
   }, []);
+  if (error) {
+    return <div className="error">Error: {error}</div>;
+  }
+  if (isLoading) {
+    return <div className="loading">Loading...</div>;
+  }
   return (
     <div className="transaction-history">
       <h1>Transaction History</h1>

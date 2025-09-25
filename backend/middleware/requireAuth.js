@@ -8,8 +8,10 @@ const requireAuth = async (req, res, next) => {
   }
   const token = authorization.split(" ")[1];
   try {
-    const { _id } = jwt.verify(token, process.env.JWT_SECRET);
-    req.account = await Account.findOne({ _id }).select("_id");
+    const { accountNumber } = jwt.verify(token, process.env.JWT_SECRET);
+    req.account = await Account.findOne({ accountNumber }).select(
+      "accountNumber"
+    );
     next();
   } catch (error) {
     console.log(error);
