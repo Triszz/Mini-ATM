@@ -19,7 +19,11 @@ function Home() {
         setIsBalanceHide(response.data.isBalanceHide);
         console.log(response.data.isBalanceHide);
       } catch (error) {
-        setError(error.message);
+        const errorMessage =
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          error.message;
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }

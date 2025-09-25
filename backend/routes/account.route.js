@@ -10,16 +10,17 @@ const {
   transfer,
   changeBalanceState,
 } = require("../controllers/account.controller");
+const requireAuth = require("../middleware/requireAuth");
 
 router.post("/signup", signupAccount);
 router.post("/login", loginAccount);
 
-router.get("/:accountNumber", getAccount);
+router.use(requireAuth);
 
+router.get("/:accountNumber", getAccount);
 router.post("/:accountNumber/withdraw", withdraw);
 router.post("/:senderAccountNumber/transfer", transfer);
 router.post("/:accountNumber/deposit", deposit);
-
 router.get("/:accountNumber/history", getTransactionHistory);
 router.put("/:accountNumber/balance-state", changeBalanceState);
 
