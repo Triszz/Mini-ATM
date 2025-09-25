@@ -1,21 +1,32 @@
 import { useState } from "react";
 import { AccountAPI } from "../services/api";
+import { useAuthContext } from "../hooks/useAuthContext";
 function Withdraw() {
   const [amount, setAmount] = useState("");
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const { user } = useAuthContext();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     try {
+      if (!user) {
+        setError("Please login to continue");
+        return;
+      }
+
       setIsLoading(true);
+
       const response = await AccountAPI.withdraw(
         "269997912",
         Number(amount),
         pin
       );
       console.log(response.data);
+      setSuccess(`Successfully withdraw $${amount}`);
       setAmount("");
       setPin("");
     } catch (error) {
@@ -35,25 +46,34 @@ function Withdraw() {
       <form className="withdraw-form" onSubmit={handleSubmit}>
         <label>Amount ($): </label>
         <input
-          type="text"
+          type="number"
+          min="0"
           className="amount-input"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
+          disabled={isLoading}
           autoFocus
         />
         <label>PIN:</label>
         <input
           type="password"
+          maxLength="6"
           className="pin-input"
           value={pin}
           onChange={(e) => setPin(e.target.value)}
+          disabled={isLoading}
         />
-        <button type="submit" className="button login withdraw-button">
-          Withdraw
+        <button
+          type="submit"
+          className="button login withdraw-button"
+          disabled={isLoading || !amount || !pin}
+        >
+          {isLoading ? "Processing..." : "Withdraw"}
         </button>
       </form>
-      {isLoading && <div className="loading">Loading...</div>}
+      {isLoading && <div className="loading">Processing withdrawal...</div>}
       {error && <div className="error">Error: {error}</div>}
+      {success && <div className="success">{success}</div>}
     </div>
   );
 }

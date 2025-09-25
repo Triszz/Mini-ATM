@@ -53,7 +53,7 @@ const withdraw = async (req, res) => {
   try {
     const { accountNumber } = req.params;
     const { amount, pin } = req.body;
-    if (!amount || !pin) {
+    if ((!amount || !pin) && amount !== 0) {
       return res.status(400).json({ message: "Amount and PIN are required" });
     }
     if (amount <= 0) {
