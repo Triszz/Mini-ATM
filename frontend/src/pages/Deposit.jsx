@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AccountAPI } from "../services/api";
 import { useAuthContext } from "../hooks/useAuthContext";
-function Withdraw() {
+function Deposit() {
   const [amount, setAmount] = useState("");
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
@@ -20,7 +20,7 @@ function Withdraw() {
 
       setIsLoading(true);
 
-      const response = await AccountAPI.withdraw(
+      const response = await AccountAPI.deposit(
         "755053976",
         Number(amount),
         pin
@@ -28,7 +28,7 @@ function Withdraw() {
       const newBalance = await AccountAPI.getAccount("755053976");
       console.log(response.data);
       setSuccess(
-        `Successfully withdraw $${amount}. New balance: $${newBalance.data.balance}`
+        `Successfully deposit $${amount}. New balance: $${newBalance.data.balance}`
       );
       setAmount("");
       setPin("");
@@ -38,15 +38,15 @@ function Withdraw() {
         error.response?.data?.message ||
         error.message;
       setError(errorMessage);
-      console.error("Error withdraw: ", error);
+      console.error("Error deposit: ", error);
     } finally {
       setIsLoading(false);
     }
   };
   return (
-    <div className="withdraw-container">
-      <h1>Withdrawal</h1>
-      <form className="withdraw-form" onSubmit={handleSubmit}>
+    <div className="deposit-container">
+      <h1>Deposit</h1>
+      <form className="deposit-form" onSubmit={handleSubmit}>
         <label>Amount ($): </label>
         <input
           type="number"
@@ -68,16 +68,16 @@ function Withdraw() {
         />
         <button
           type="submit"
-          className="button login withdraw-button"
+          className="button login deposit-button"
           disabled={isLoading || !amount || !pin}
         >
-          {isLoading ? "Processing..." : "Withdraw"}
+          {isLoading ? "Processing..." : "Deposit"}
         </button>
       </form>
-      {isLoading && <div className="loading">Processing withdrawal...</div>}
+      {isLoading && <div className="loading">Processing depositing...</div>}
       {error && <div className="error">Error: {error}</div>}
       {success && <div className="success">{success}</div>}
     </div>
   );
 }
-export default Withdraw;
+export default Deposit;

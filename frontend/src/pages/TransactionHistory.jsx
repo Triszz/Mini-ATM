@@ -10,7 +10,7 @@ function TransactionHistory() {
     const fetchTransactionHistory = async () => {
       try {
         setIsLoading(true);
-        const response = await AccountAPI.getTransactionHistory("269997912");
+        const response = await AccountAPI.getTransactionHistory("755053976");
         setTransactions(response.data.transactions);
       } catch (error) {
         const errorMessage =
@@ -59,7 +59,16 @@ function TransactionHistory() {
       <h1>Transaction History</h1>
       <ul className="transaction-list">
         {transactions.map((transaction) => (
-          <li key={transaction._id} className="transaction-item">
+          <li
+            key={transaction._id}
+            className={`transaction-item ${
+              transaction.receiver === "755053976" &&
+              (transaction.type === "deposit" ||
+                transaction.type === "transfer")
+                ? "receive"
+                : "send"
+            }`}
+          >
             <span>Sender: {transaction.sender}</span>
             <span>Receiver: {transaction.receiver}</span>
             <span>Type: {transaction.type}</span>

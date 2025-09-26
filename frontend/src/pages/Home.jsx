@@ -14,7 +14,7 @@ function Home() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await AccountAPI.getAccount("269997912");
+        const response = await AccountAPI.getAccount("755053976");
         setUsername(response.data.username);
         setBalance(response.data.balance);
         setAccountNumber(response.data.accountNumber);

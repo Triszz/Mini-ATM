@@ -246,8 +246,15 @@
   background: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-.withdraw-container {
+.transaction-item.receive {
+  background-color: rgba(96, 249, 96, 0.603);
+}
+.transaction-item.send {
+  background-color: rgba(255, 172, 172, 0.571);
+}
+.withdraw-container,
+.deposit-container,
+.transfer-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -255,14 +262,20 @@
   padding: 50px 0;
   gap: 15px;
 }
-.withdraw-form {
+.withdraw-form,
+.deposit-form,
+.transfer-form {
   display: flex;
   flex-direction: column;
 }
-.withdraw-form label {
+.withdraw-form label,
+.deposit-form label,
+.transfer-form label {
   margin-top: 15px;
 }
-.withdraw-button {
+.withdraw-button,
+.deposit-button,
+.transfer-button {
   margin-top: 10px;
 }
 

@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import TransactionHistory from "./pages/TransactionHistory";
 import Withdraw from "./pages/Withdraw";
+import Deposit from "./pages/Deposit";
+import Transfer from "./pages/Transfer";
 import "./App.css";
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
             <Route path="/signup" element={<Signup />}></Route>
             <Route path="/history" element={<TransactionHistory />}></Route>
             <Route path="/withdraw" element={<Withdraw />}></Route>
+            <Route path="/deposit" element={<Deposit />}></Route>
+            <Route path="/transfer" element={<Transfer />}></Route>
           </Routes>
         </div>
       </BrowserRouter>

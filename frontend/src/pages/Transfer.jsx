@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { AccountAPI } from "../services/api";
 import { useAuthContext } from "../hooks/useAuthContext";
-function Withdraw() {
+function Transfer() {
   const [amount, setAmount] = useState("");
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [receiverAccountNumber, setReceiverAccountNumber] = useState("");
   const { user } = useAuthContext();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,18 +21,20 @@ function Withdraw() {
 
       setIsLoading(true);
 
-      const response = await AccountAPI.withdraw(
+      const response = await AccountAPI.transfer(
         "755053976",
+        receiverAccountNumber,
         Number(amount),
         pin
       );
       const newBalance = await AccountAPI.getAccount("755053976");
       console.log(response.data);
       setSuccess(
-        `Successfully withdraw $${amount}. New balance: $${newBalance.data.balance}`
+        `Successfully transfer $${amount}. New balance: $${newBalance.data.balance}`
       );
       setAmount("");
       setPin("");
+      setReceiverAccountNumber("");
     } catch (error) {
       const errorMessage =
         error.response?.data?.error ||
@@ -44,9 +47,18 @@ function Withdraw() {
     }
   };
   return (
-    <div className="withdraw-container">
-      <h1>Withdrawal</h1>
-      <form className="withdraw-form" onSubmit={handleSubmit}>
+    <div className="transfer-container">
+      <h1>Transfer</h1>
+      <form className="transfer-form" onSubmit={handleSubmit}>
+        <label>Account number: </label>
+        <input
+          type="text"
+          className="receiver-account-number-input"
+          value={receiverAccountNumber}
+          onChange={(e) => setReceiverAccountNumber(e.target.value)}
+          disabled={isLoading}
+          autoFocus
+        />
         <label>Amount ($): </label>
         <input
           type="number"
@@ -55,7 +67,6 @@ function Withdraw() {
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           disabled={isLoading}
-          autoFocus
         />
         <label>PIN:</label>
         <input
@@ -68,16 +79,16 @@ function Withdraw() {
         />
         <button
           type="submit"
-          className="button login withdraw-button"
+          className="button login transfer-button"
           disabled={isLoading || !amount || !pin}
         >
-          {isLoading ? "Processing..." : "Withdraw"}
+          {isLoading ? "Processing..." : "Transfer"}
         </button>
       </form>
-      {isLoading && <div className="loading">Processing withdrawal...</div>}
+      {isLoading && <div className="loading">Processing transferring...</div>}
       {error && <div className="error">Error: {error}</div>}
       {success && <div className="success">{success}</div>}
     </div>
   );
 }
-export default Withdraw;
+export default Transfer;
