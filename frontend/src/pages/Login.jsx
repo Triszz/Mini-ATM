@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { AccountAPI } from "../services/api";
 import { useLogin } from "../hooks/useLogin";
 function Login() {
   const [email, setEmail] = useState("");

@@ -20,12 +20,8 @@ function Deposit() {
 
       setIsLoading(true);
 
-      const response = await AccountAPI.deposit(
-        "755053976",
-        Number(amount),
-        pin
-      );
-      const newBalance = await AccountAPI.getAccount("755053976");
+      const response = await AccountAPI.deposit(Number(amount), pin);
+      const newBalance = await AccountAPI.getAccount();
       console.log(response.data);
       setSuccess(
         `Successfully deposit $${amount}. New balance: $${newBalance.data.balance}`

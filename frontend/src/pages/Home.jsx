@@ -14,7 +14,7 @@ function Home() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await AccountAPI.getAccount("755053976");
+        const response = await AccountAPI.getAccount();
         setUsername(response.data.username);
         setBalance(response.data.balance);
         setAccountNumber(response.data.accountNumber);
@@ -45,7 +45,7 @@ function Home() {
     try {
       const newState = !isBalanceHide;
       setIsBalanceHide(newState);
-      await AccountAPI.changeBalanceState(accountNumber, !isBalanceHide);
+      await AccountAPI.changeBalanceState(!isBalanceHide);
     } catch (error) {
       setIsBalanceHide(isBalanceHide);
       setError("Failed to update balance visibility");

@@ -29,15 +29,15 @@ export const AccountAPI = {
   signup: (data) => api.post("/signup", data),
 
   // get account
-  getAccount: (accountNumber) =>
-    api.get(`${accountNumber}`, {
+  getAccount: () =>
+    api.get(`/`, {
       headers: getAuthHeaders(),
     }),
 
   // withdraw
-  withdraw: (accountNumber, amount, pin) =>
+  withdraw: (amount, pin) =>
     api.post(
-      `/${accountNumber}/withdraw`,
+      `/withdraw`,
       { amount, pin },
       {
         headers: getAuthHeaders(),
@@ -45,9 +45,9 @@ export const AccountAPI = {
     ),
 
   // transfer
-  transfer: (accountNumber, receiverAccountNumber, amount, pin) =>
+  transfer: (receiverAccountNumber, amount, pin) =>
     api.post(
-      `/${accountNumber}/transfer`,
+      `/transfer`,
       {
         receiverAccountNumber,
         amount,
@@ -59,9 +59,9 @@ export const AccountAPI = {
     ),
 
   // deposit
-  deposit: (accountNumber, amount, pin) =>
+  deposit: (amount, pin) =>
     api.post(
-      `/${accountNumber}/deposit`,
+      `/deposit`,
       { amount, pin },
       {
         headers: getAuthHeaders(),
@@ -69,16 +69,16 @@ export const AccountAPI = {
     ),
 
   // get transaction history
-  getTransactionHistory: (accountNumber, limit, page, type) =>
-    api.get(`${accountNumber}/history`, {
+  getTransactionHistory: (limit, page, type) =>
+    api.get(`/history`, {
       params: { limit, page, type },
       headers: getAuthHeaders(),
     }),
 
   // change balance state
-  changeBalanceState: (accountNumber, isBalanceHide) =>
+  changeBalanceState: (isBalanceHide) =>
     api.put(
-      `${accountNumber}/balance-state`,
+      `/balance-state`,
       { isBalanceHide },
       {
         headers: getAuthHeaders(),

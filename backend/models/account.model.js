@@ -84,7 +84,8 @@ AccountSchema.methods.transfer = async function (
   receiver.balance += amount;
   await receiver.save();
   this.balance -= amount;
-  return this.balance;
+  await this.save();
+  return { senderBalance: this.balance, receiverBalance: receiver.balance };
 };
 AccountSchema.methods.deposit = async function (amount, pin) {
   await this.isValidPin(pin);

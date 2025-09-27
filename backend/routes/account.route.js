@@ -17,11 +17,11 @@ router.post("/login", loginAccount);
 
 router.use(requireAuth);
 
-router.get("/:accountNumber", getAccount);
-router.post("/:accountNumber/withdraw", withdraw);
-router.post("/:senderAccountNumber/transfer", transfer);
-router.post("/:accountNumber/deposit", deposit);
-router.get("/:accountNumber/history", getTransactionHistory);
-router.put("/:accountNumber/balance-state", changeBalanceState);
+router.get("/", getAccount);
+router.post("/withdraw", withdraw);
+router.post("/transfer", transfer);
+router.post("/deposit", deposit);
+router.get("/history", getTransactionHistory);
+router.put("/balance-state", changeBalanceState);
 
 module.exports = router;

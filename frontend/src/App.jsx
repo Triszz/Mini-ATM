@@ -1,4 +1,6 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router";
+import { useAuthContext } from "./hooks/useAuthContext";
+// pages & component
 import Home from "./pages/Home";
 import Header from "./components/Header";
 import Login from "./pages/Login";
@@ -10,19 +12,41 @@ import Transfer from "./pages/Transfer";
 import "./App.css";
 
 function App() {
+  const { user } = useAuthContext();
   return (
     <div className="App">
       <BrowserRouter>
         <Header />
         <div className="pages">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />}></Route>
-            <Route path="/signup" element={<Signup />}></Route>
-            <Route path="/history" element={<TransactionHistory />}></Route>
-            <Route path="/withdraw" element={<Withdraw />}></Route>
-            <Route path="/deposit" element={<Deposit />}></Route>
-            <Route path="/transfer" element={<Transfer />}></Route>
+            <Route
+              path="/"
+              element={user ? <Home /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/login"
+              element={!user ? <Login /> : <Navigate to="/" />}
+            ></Route>
+            <Route
+              path="/signup"
+              element={!user ? <Signup /> : <Navigate to="/" />}
+            ></Route>
+            <Route
+              path="/history"
+              element={user ? <TransactionHistory /> : <Navigate to="/login" />}
+            ></Route>
+            <Route
+              path="/withdraw"
+              element={user ? <Withdraw /> : <Navigate to="/login" />}
+            ></Route>
+            <Route
+              path="/deposit"
+              element={user ? <Deposit /> : <Navigate to="/login" />}
+            ></Route>
+            <Route
+              path="/transfer"
+              element={user ? <Transfer /> : <Navigate to="/login" />}
+            ></Route>
           </Routes>
         </div>
       </BrowserRouter>

@@ -9,9 +9,10 @@ const requireAuth = async (req, res, next) => {
   const token = authorization.split(" ")[1];
   try {
     const { accountNumber } = jwt.verify(token, process.env.JWT_SECRET);
-    req.account = await Account.findOne({ accountNumber }).select(
-      "accountNumber"
-    );
+    req.user = await Account.findOne({ accountNumber }).select("accountNumber");
+    if (!req.user) {
+      return res.status(401).json({ error: "Account not found" });
+    }
     next();
   } catch (error) {
     console.log(error);

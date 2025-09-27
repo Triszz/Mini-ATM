@@ -6,11 +6,13 @@ function TransactionHistory() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const { user, isInitialized } = useAuthContext();
+  console.log("🔍 Full user object:", user);
+  console.log("🔍 User keys:", Object.keys(user || {}));
   useEffect(() => {
     const fetchTransactionHistory = async () => {
       try {
         setIsLoading(true);
-        const response = await AccountAPI.getTransactionHistory("755053976");
+        const response = await AccountAPI.getTransactionHistory();
         setTransactions(response.data.transactions);
       } catch (error) {
         const errorMessage =
@@ -54,6 +56,14 @@ function TransactionHistory() {
   if (isLoading) {
     return <div className="loading">Loading...</div>;
   }
+  if (transactions.length === 0) {
+    return (
+      <div className="empty">
+        You don't have any transactions yet. Make your first transaction!
+      </div>
+    );
+  }
+
   return (
     <div className="transaction-history">
       <h1>Transaction History</h1>
@@ -62,21 +72,30 @@ function TransactionHistory() {
           <li
             key={transaction._id}
             className={`transaction-item ${
-              transaction.receiver === "755053976" &&
-              (transaction.type === "deposit" ||
-                transaction.type === "transfer")
-                ? "receive"
-                : "send"
+              transaction.receiver === user.accountNumber ? "receive" : "send"
             }`}
           >
-            <span>Sender: {transaction.sender}</span>
-            <span>Receiver: {transaction.receiver}</span>
-            <span>Type: {transaction.type}</span>
-            <span>Amount: {transaction.amount}</span>
-            <span>Status: {transaction.status}</span>
+            <span>Sender: {transaction.senderName}</span>
+            <span>Receiver: {transaction.receiverName}</span>
             <span>Content: {transaction.content}</span>
-            <span>Balance before: ${transaction.balanceBefore}</span>
-            <span>Balance after: ${transaction.balanceAfter}</span>
+            <span>Type: {transaction.type}</span>
+            <span>
+              Amount: {transaction.sender === user.accountNumber ? "-" : "+"}
+              {transaction.amount}
+            </span>
+            <span>Status: {transaction.status}</span>
+            <span>
+              Balance before: $
+              {transaction.sender === user.accountNumber
+                ? transaction.senderBalanceBefore
+                : transaction.receiverBalanceBefore}
+            </span>
+            <span>
+              Balance after: $
+              {transaction.sender === user.accountNumber
+                ? transaction.senderBalanceAfter
+                : transaction.receiverBalanceAfter}
+            </span>
             <span>Date: {formatTimestamp(transaction.createdAt)}</span>
           </li>
         ))}

@@ -12,7 +12,7 @@ const createToken = (accountNumber) => {
 // get account
 const getAccount = async (req, res) => {
   try {
-    const { accountNumber } = req.params;
+    const accountNumber = req.user.accountNumber;
     const account = await Account.findOne({ accountNumber });
     if (!account) {
       return res.status(404).json({ message: "Account is not found!" });
@@ -42,7 +42,8 @@ const loginAccount = async (req, res) => {
     const account = await Account.login(email, password);
     // create token
     const token = createToken(account.accountNumber);
-    res.status(200).json({ email, token });
+
+    res.status(200).json({ accountNumber: account.accountNumber, token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -51,7 +52,7 @@ const loginAccount = async (req, res) => {
 // withdraw
 const withdraw = async (req, res) => {
   try {
-    const { accountNumber } = req.params;
+    const accountNumber = req.user.accountNumber;
     const { amount, pin } = req.body;
     if ((!amount || !pin) && amount !== 0) {
       return res.status(400).json({ message: "Amount and PIN are required" });
@@ -71,11 +72,15 @@ const withdraw = async (req, res) => {
     const transaction = await Transaction.create({
       sender: accountNumber,
       receiver: accountNumber,
+      senderName: account.username,
+      receiverName: account.username,
       type: "withdrawal",
       amount: amount,
       content: `ATM withdrawal of $${amount}`,
-      balanceBefore: balanceBefore,
-      balanceAfter: balanceAfter,
+      senderBalanceBefore: balanceBefore,
+      senderBalanceAfter: balanceAfter,
+      receiverBalanceBefore: balanceBefore,
+      receiverBalanceAfter: balanceAfter,
     });
     res.status(200).json({
       success: true,
@@ -96,7 +101,7 @@ const withdraw = async (req, res) => {
 // transfer
 const transfer = async (req, res) => {
   try {
-    const { senderAccountNumber } = req.params;
+    const senderAccountNumber = req.user.accountNumber;
     const { receiverAccountNumber, amount, pin } = req.body;
     if (!receiverAccountNumber) {
       return res.status(400).json({
@@ -121,31 +126,49 @@ const transfer = async (req, res) => {
       });
     }
 
-    const account = await Account.findOne({
+    const senderAccount = await Account.findOne({
       accountNumber: senderAccountNumber,
     });
 
-    if (!account) {
+    const receiverAccount = await Account.findOne({
+      accountNumber: receiverAccountNumber,
+    });
+
+    if (!senderAccount) {
       return res.status(404).json({
-        message: "Account is not found!",
+        message: "Sender account not found!",
       });
     }
-    const { content = `${account.username} transfers` } = req.body;
-    const balanceBefore = account.getBalance();
-    const balanceAfter = await account.transfer(
+
+    if (!receiverAccount) {
+      return res.status(404).json({
+        message: "Receiver account not found!",
+      });
+    }
+    const { content = `${senderAccount.username} transfers` } = req.body;
+    const senderBalanceBefore = senderAccount.getBalance();
+    const receiverBalanceBefore = receiverAccount.getBalance();
+    const { senderBalance, receiverBalance } = await senderAccount.transfer(
       receiverAccountNumber,
       amount,
       pin
     );
-    await account.save();
+
+    const senderBalanceAfter = senderBalance;
+    const receiverBalanceAfter = receiverBalance;
+
     const transaction = await Transaction.create({
       sender: senderAccountNumber,
       receiver: receiverAccountNumber,
+      senderName: senderAccount.username,
+      receiverName: receiverAccount.username,
       type: "transfer",
       amount: amount,
       content: content,
-      balanceBefore: balanceBefore,
-      balanceAfter: balanceAfter,
+      senderBalanceBefore: senderBalanceBefore,
+      senderBalanceAfter: senderBalanceAfter,
+      receiverBalanceBefore: receiverBalanceBefore,
+      receiverBalanceAfter: receiverBalanceAfter,
     });
     res.status(200).json({
       success: true,
@@ -155,7 +178,7 @@ const transfer = async (req, res) => {
         transactionType: "transfer",
         content: content,
         amount: parseFloat(amount),
-        newBalance: balanceAfter,
+        newBalance: senderBalanceAfter,
         transactionTime: transaction.createdAt,
       },
     });
@@ -167,7 +190,7 @@ const transfer = async (req, res) => {
 // deposit
 const deposit = async (req, res) => {
   try {
-    const { accountNumber } = req.params;
+    const accountNumber = req.user.accountNumber;
     const { amount, pin } = req.body;
     if (!amount || !pin) {
       return res.status(400).json({ message: "Amount and PIN are required" });
@@ -187,11 +210,15 @@ const deposit = async (req, res) => {
     const transaction = await Transaction.create({
       sender: accountNumber,
       receiver: accountNumber,
+      senderName: account.username,
+      receiverName: account.username,
       type: "deposit",
       amount: amount,
       content: `ATM deposit of $${amount}`,
-      balanceBefore: balanceBefore,
-      balanceAfter: balanceAfter,
+      senderBalanceBefore: balanceBefore,
+      senderBalanceAfter: balanceAfter,
+      receiverBalanceBefore: balanceBefore,
+      receiverBalanceAfter: balanceAfter,
     });
     res.status(200).json({
       success: true,
@@ -212,7 +239,7 @@ const deposit = async (req, res) => {
 // get transaction history
 const getTransactionHistory = async (req, res) => {
   try {
-    const { accountNumber } = req.params;
+    const accountNumber = req.user.accountNumber;
     const { limit = 10, page = 1, type } = req.query;
     const history = await Transaction.getTransactionHistory(
       accountNumber,
@@ -236,7 +263,7 @@ const getTransactionHistory = async (req, res) => {
 };
 const changeBalanceState = async (req, res) => {
   try {
-    const { accountNumber } = req.params;
+    const accountNumber = req.user.accountNumber;
     const { isBalanceHide } = req.body;
     const account = await Account.findOneAndUpdate(
       { accountNumber },

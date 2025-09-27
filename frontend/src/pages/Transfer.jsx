@@ -22,12 +22,11 @@ function Transfer() {
       setIsLoading(true);
 
       const response = await AccountAPI.transfer(
-        "755053976",
         receiverAccountNumber,
         Number(amount),
         pin
       );
-      const newBalance = await AccountAPI.getAccount("755053976");
+      const newBalance = await AccountAPI.getAccount();
       console.log(response.data);
       setSuccess(
         `Successfully transfer $${amount}. New balance: $${newBalance.data.balance}`

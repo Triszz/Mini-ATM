@@ -20,12 +20,8 @@ function Withdraw() {
 
       setIsLoading(true);
 
-      const response = await AccountAPI.withdraw(
-        "755053976",
-        Number(amount),
-        pin
-      );
-      const newBalance = await AccountAPI.getAccount("755053976");
+      const response = await AccountAPI.withdraw(Number(amount), pin);
+      const newBalance = await AccountAPI.getAccount();
       console.log(response.data);
       setSuccess(
         `Successfully withdraw $${amount}. New balance: $${newBalance.data.balance}`

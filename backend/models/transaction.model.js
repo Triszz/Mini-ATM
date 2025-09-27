@@ -12,6 +12,14 @@ const TransactionSchema = mongoose.Schema(
       required: true,
       ref: "Account",
     },
+    senderName: {
+      type: String,
+      required: true,
+    },
+    receiverName: {
+      type: String,
+      required: true,
+    },
     type: {
       type: String,
       required: true,
@@ -31,13 +39,25 @@ const TransactionSchema = mongoose.Schema(
       type: String,
       default: "",
     },
-    balanceBefore: {
+    senderBalanceBefore: {
       type: Number,
       required: true,
     },
-    balanceAfter: {
+    senderBalanceAfter: {
       type: Number,
       required: true,
+    },
+    receiverBalanceBefore: {
+      type: Number,
+      required: function () {
+        return this.type === "transfer";
+      },
+    },
+    receiverBalanceAfter: {
+      type: Number,
+      required: function () {
+        return this.type === "transfer";
+      },
     },
   },
   { timestamps: true }

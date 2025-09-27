@@ -303,3 +303,8 @@ input:focus {
   border: 2px solid rgb(0, 175, 0);
   border-radius: 8px;
 }
+
+.empty {
+  padding: 20px;
+  text-align: center;
+}
