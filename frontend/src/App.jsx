@@ -12,7 +12,16 @@ import Transfer from "./pages/Transfer";
 import "./App.css";
 
 function App() {
-  const { user } = useAuthContext();
+  const { user, isInitialized } = useAuthContext();
+  if (!isInitialized) {
+    return (
+      <div className="App">
+        <div className="loading-container">
+          <div className="loading">Loading...</div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="App">
       <BrowserRouter>
