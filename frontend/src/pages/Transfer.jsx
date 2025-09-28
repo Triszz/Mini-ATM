@@ -79,7 +79,7 @@ function Transfer() {
         <button
           type="submit"
           className="button login transfer-button"
-          disabled={isLoading || !amount || !pin}
+          disabled={isLoading || !amount || !pin || !receiverAccountNumber}
         >
           {isLoading ? "Processing..." : "Transfer"}
         </button>

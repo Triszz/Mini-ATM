@@ -72,7 +72,11 @@ function TransactionHistory() {
           <li
             key={transaction._id}
             className={`transaction-item ${
-              transaction.receiver === user.accountNumber ? "receive" : "send"
+              (transaction.type === "transfer" &&
+                transaction.sender === user.accountNumber) ||
+              transaction.type === "withdrawal"
+                ? "send"
+                : "receive"
             }`}
           >
             <span>Sender: {transaction.senderName}</span>
@@ -80,7 +84,12 @@ function TransactionHistory() {
             <span>Content: {transaction.content}</span>
             <span>Type: {transaction.type}</span>
             <span>
-              Amount: {transaction.sender === user.accountNumber ? "-" : "+"}
+              Amount:{" "}
+              {(transaction.type === "transfer" &&
+                transaction.sender === user.accountNumber) ||
+              transaction.type === "withdrawal"
+                ? "-"
+                : "+"}
               {transaction.amount}
             </span>
             <span>Status: {transaction.status}</span>
