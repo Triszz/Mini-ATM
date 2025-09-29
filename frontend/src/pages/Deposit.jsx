@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { AccountAPI } from "../services/api";
 import { useAuthContext } from "../hooks/useAuthContext";
 function Deposit() {
@@ -8,6 +9,8 @@ function Deposit() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const { user } = useAuthContext();
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -24,7 +27,7 @@ function Deposit() {
       const newBalance = await AccountAPI.getAccount();
       console.log(response.data);
       setSuccess(
-        `Successfully deposit $${amount}. New balance: $${newBalance.data.balance}`
+        `Successfully deposit $${amount}. \nNew balance: $${newBalance.data.balance}`
       );
       setAmount("");
       setPin("");
@@ -40,39 +43,48 @@ function Deposit() {
     }
   };
   return (
-    <div className="deposit-container">
-      <h1>Deposit</h1>
-      <form className="deposit-form" onSubmit={handleSubmit}>
-        <label>Amount ($): </label>
-        <input
-          type="number"
-          min="0"
-          className="amount-input"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          disabled={isLoading}
-          autoFocus
-        />
-        <label>PIN:</label>
-        <input
-          type="password"
-          maxLength="6"
-          className="pin-input"
-          value={pin}
-          onChange={(e) => setPin(e.target.value)}
-          disabled={isLoading}
-        />
+    <div className="transaction-container">
+      <div className="transaction-card">
         <button
-          type="submit"
-          className="button login deposit-button"
-          disabled={isLoading || !amount || !pin}
+          className="back-button"
+          onClick={() => navigate("/")}
+          disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Deposit"}
+          ← Back to Home
         </button>
-      </form>
-      {isLoading && <div className="loading">Processing depositing...</div>}
-      {error && <div className="error">Error: {error}</div>}
-      {success && <div className="success">{success}</div>}
+        <h1>Deposit</h1>
+        <form className="deposit-form" onSubmit={handleSubmit}>
+          <label>Amount ($): </label>
+          <input
+            type="number"
+            min="0"
+            className="amount-input"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            disabled={isLoading}
+            autoFocus
+          />
+          <label>PIN:</label>
+          <input
+            type="password"
+            maxLength="6"
+            className="pin-input"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            disabled={isLoading}
+          />
+          <button
+            type="submit"
+            className="button login deposit-button"
+            disabled={isLoading || !amount || !pin}
+          >
+            {isLoading ? "Processing..." : "Deposit"}
+          </button>
+        </form>
+        {isLoading && <div className="loading">Processing depositing...</div>}
+        {error && <div className="error">Error: {error}</div>}
+        {success && <div className="success">{success}</div>}
+      </div>
     </div>
   );
 }

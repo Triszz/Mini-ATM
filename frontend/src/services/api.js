@@ -45,12 +45,13 @@ export const AccountAPI = {
     ),
 
   // transfer
-  transfer: (receiverAccountNumber, amount, pin) =>
+  transfer: (receiverAccountNumber, amount, content, pin) =>
     api.post(
       `/transfer`,
       {
         receiverAccountNumber,
         amount,
+        content,
         pin,
       },
       {

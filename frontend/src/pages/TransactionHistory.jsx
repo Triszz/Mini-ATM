@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router";
 import { AccountAPI } from "../services/api";
 import { useAuthContext } from "../hooks/useAuthContext";
 function TransactionHistory() {
@@ -6,8 +7,8 @@ function TransactionHistory() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const { user, isInitialized } = useAuthContext();
-  console.log("🔍 Full user object:", user);
-  console.log("🔍 User keys:", Object.keys(user || {}));
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchTransactionHistory = async () => {
       try {
@@ -66,6 +67,13 @@ function TransactionHistory() {
 
   return (
     <div className="transaction-history">
+      <button
+        className="back-button"
+        onClick={() => navigate("/")}
+        disabled={isLoading}
+      >
+        ← Back to Home
+      </button>
       <h1>Transaction History</h1>
       <ul className="transaction-list">
         {transactions.map((transaction) => (

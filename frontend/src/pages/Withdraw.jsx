@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { AccountAPI } from "../services/api";
 import { useAuthContext } from "../hooks/useAuthContext";
 function Withdraw() {
@@ -8,6 +9,8 @@ function Withdraw() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const { user } = useAuthContext();
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -24,7 +27,7 @@ function Withdraw() {
       const newBalance = await AccountAPI.getAccount();
       console.log(response.data);
       setSuccess(
-        `Successfully withdraw $${amount}. New balance: $${newBalance.data.balance}`
+        `Successfully withdraw $${amount}. \nNew balance: $${newBalance.data.balance}`
       );
       setAmount("");
       setPin("");
@@ -40,39 +43,48 @@ function Withdraw() {
     }
   };
   return (
-    <div className="withdraw-container">
-      <h1>Withdrawal</h1>
-      <form className="withdraw-form" onSubmit={handleSubmit}>
-        <label>Amount ($): </label>
-        <input
-          type="number"
-          min="0"
-          className="amount-input"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          disabled={isLoading}
-          autoFocus
-        />
-        <label>PIN:</label>
-        <input
-          type="password"
-          maxLength="6"
-          className="pin-input"
-          value={pin}
-          onChange={(e) => setPin(e.target.value)}
-          disabled={isLoading}
-        />
+    <div className="transaction-container">
+      <div className="transaction-card">
         <button
-          type="submit"
-          className="button login withdraw-button"
-          disabled={isLoading || !amount || !pin}
+          className="back-button"
+          onClick={() => navigate("/")}
+          disabled={isLoading}
         >
-          {isLoading ? "Processing..." : "Withdraw"}
+          ← Back to Home
         </button>
-      </form>
-      {isLoading && <div className="loading">Processing withdrawal...</div>}
-      {error && <div className="error">Error: {error}</div>}
-      {success && <div className="success">{success}</div>}
+        <h1>Withdrawal</h1>
+        <form className="withdraw-form" onSubmit={handleSubmit}>
+          <label>Amount ($): </label>
+          <input
+            type="number"
+            min="0"
+            className="amount-input"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            disabled={isLoading}
+            autoFocus
+          />
+          <label>PIN:</label>
+          <input
+            type="password"
+            maxLength="6"
+            className="pin-input"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            disabled={isLoading}
+          />
+          <button
+            type="submit"
+            className="button login withdraw-button"
+            disabled={isLoading || !amount || !pin}
+          >
+            {isLoading ? "Processing..." : "Withdraw"}
+          </button>
+        </form>
+        {isLoading && <div className="loading">Processing withdrawal...</div>}
+        {error && <div className="error">Error: {error}</div>}
+        {success && <div className="success">{success}</div>}
+      </div>
     </div>
   );
 }
