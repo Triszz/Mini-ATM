@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { AccountAPI } from "../services/api";
 import { useAuthContext } from "../hooks/useAuthContext";
 function Transfer() {
@@ -9,11 +9,18 @@ function Transfer() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
-  const [receiverAccountNumber, setReceiverAccountNumber] = useState("");
   const { user } = useAuthContext();
   const navigate = useNavigate();
+  const location = useLocation();
+  const receiverData = location.state;
+  const receiverAccountNumber = receiverData?.receiverAccountNumber;
+  const receiverName = receiverData?.receiverName;
 
   useEffect(() => {
+    if (!receiverData || !receiverAccountNumber) {
+      navigate("/prev-transfer");
+      return;
+    }
     const loadUserData = async () => {
       try {
         if (user) {
@@ -26,7 +33,7 @@ function Transfer() {
     };
 
     loadUserData();
-  }, [user]);
+  }, [user, receiverData, receiverAccountNumber, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,7 +60,6 @@ function Transfer() {
       );
       setAmount("");
       setPin("");
-      setReceiverAccountNumber("");
       const userResponse = await AccountAPI.getAccount();
       setContent(`${userResponse.data.username} transfer`);
     } catch (error) {
@@ -67,27 +73,44 @@ function Transfer() {
       setIsLoading(false);
     }
   };
+
+  if (!receiverData || !receiverAccountNumber) {
+    return (
+      <div className="transaction-container">
+        <div className="transaction-card">
+          <div className="loading">Redirecting...</div>
+        </div>
+      </div>
+    );
+  }
+  const handleBack = () => {
+    navigate("/prev-transfer", {
+      state: {
+        fromTransfer: true,
+        receiverAccountNumber: receiverAccountNumber,
+      },
+    });
+  };
   return (
     <div className="transaction-container">
       <div className="transaction-card">
         <button
           className="back-button"
-          onClick={() => navigate("/")}
+          onClick={handleBack}
           disabled={isLoading}
         >
-          ← Back to Home
+          ← Back
         </button>
         <h1>Transfer</h1>
+        <div className="receiver-info">
+          <p>
+            <strong>Transfer to::</strong> {receiverName}
+          </p>
+          <p>
+            <strong>Account number:</strong> {receiverAccountNumber}
+          </p>
+        </div>
         <form className="transfer-form" onSubmit={handleSubmit}>
-          <label>Account number: </label>
-          <input
-            type="text"
-            className="receiver-account-number-input"
-            value={receiverAccountNumber}
-            onChange={(e) => setReceiverAccountNumber(e.target.value)}
-            disabled={isLoading}
-            autoFocus
-          />
           <label>Amount ($): </label>
           <input
             type="number"
@@ -97,7 +120,7 @@ function Transfer() {
             onChange={(e) => setAmount(e.target.value)}
             disabled={isLoading}
           />
-          <label>Content: </label>
+          <label>Transfer Message: </label>
           <input
             type="text"
             className="content-input"
@@ -117,14 +140,25 @@ function Transfer() {
           <button
             type="submit"
             className="button login transfer-button"
-            disabled={isLoading || !amount || !pin || !receiverAccountNumber}
+            disabled={isLoading || !amount || !pin}
           >
-            {isLoading ? "Processing..." : "Transfer"}
+            {isLoading ? "Processing..." : `Transfer`}
           </button>
         </form>
         {isLoading && <div className="loading">Processing transferring...</div>}
         {error && <div className="error">Error: {error}</div>}
-        {success && <div className="success">{success}</div>}
+        {success && (
+          <div className="success">
+            {success}
+            <button
+              className="button signup"
+              onClick={() => navigate("/")}
+              style={{ marginTop: "10px", display: "block", width: "100%" }}
+            >
+              Back to home
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

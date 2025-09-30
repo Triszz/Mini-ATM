@@ -28,11 +28,21 @@ export const AccountAPI = {
   // signup
   signup: (data) => api.post("/signup", data),
 
-  // get account
+  // get current account
   getAccount: () =>
     api.get(`/`, {
       headers: getAuthHeaders(),
     }),
+
+  // get account by account number
+  getAccountByNumber: (receiverAccountNumber) =>
+    api.post(
+      `/prev-transfer`,
+      { receiverAccountNumber },
+      {
+        headers: getAuthHeaders(),
+      }
+    ),
 
   // withdraw
   withdraw: (amount, pin) =>

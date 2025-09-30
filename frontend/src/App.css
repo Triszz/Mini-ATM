@@ -234,7 +234,7 @@ input ~ label {
 .signup-form label {
   font-weight: 600;
   color: var(--main-color);
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .transaction-history {
@@ -498,6 +498,25 @@ button:disabled:hover {
   text-decoration: none;
 }
 
+.receiver-info {
+  background-color: #f8f9ff;
+  border: 1px solid var(--main-color);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.receiver-info p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.receiver-info strong {
+  color: var(--main-color);
+  font-weight: 600;
+}
+
 /* responsive */
 @media (max-width: 768px) {
   .transaction-container {
@@ -705,5 +724,20 @@ button:disabled:hover {
   .login-form:hover,
   .signup-form:hover {
     transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .receiver-info {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .receiver-info h3 {
+    font-size: 15px;
+  }
+
+  .receiver-details p {
+    font-size: 13px;
   }
 }

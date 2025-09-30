@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   getAccount,
+  getAccountByNumber,
   signupAccount,
   loginAccount,
   withdraw,
@@ -18,6 +19,7 @@ router.post("/login", loginAccount);
 router.use(requireAuth);
 
 router.get("/", getAccount);
+router.post("/prev-transfer", getAccountByNumber);
 router.post("/withdraw", withdraw);
 router.post("/transfer", transfer);
 router.post("/deposit", deposit);

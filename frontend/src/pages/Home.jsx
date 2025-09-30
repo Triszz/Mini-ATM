@@ -82,7 +82,7 @@ function Home() {
           <Link to="/deposit" className="action deposit">
             Deposit
           </Link>
-          <Link to="/transfer" className="action transfer">
+          <Link to="/prev-transfer" className="action transfer">
             Transfer
           </Link>
           <Link to="/history" className="action history">

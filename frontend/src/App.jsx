@@ -8,6 +8,7 @@ import Signup from "./pages/Signup";
 import TransactionHistory from "./pages/TransactionHistory";
 import Withdraw from "./pages/Withdraw";
 import Deposit from "./pages/Deposit";
+import PrevTransfer from "./pages/PrevTransfer";
 import Transfer from "./pages/Transfer";
 import "./App.css";
 
@@ -55,6 +56,10 @@ function App() {
             <Route
               path="/transfer"
               element={user ? <Transfer /> : <Navigate to="/login" />}
+            ></Route>
+            <Route
+              path="/prev-transfer"
+              element={user ? <PrevTransfer /> : <Navigate to="/login" />}
             ></Route>
           </Routes>
         </div>
