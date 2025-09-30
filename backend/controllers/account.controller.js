@@ -257,7 +257,7 @@ const deposit = async (req, res) => {
 const getTransactionHistory = async (req, res) => {
   try {
     const accountNumber = req.user.accountNumber;
-    const { limit = 10, page = 1, type } = req.query;
+    const { page = 1, limit = 10, type } = req.query;
     const history = await Transaction.getTransactionHistory(
       accountNumber,
       parseInt(limit),
@@ -267,12 +267,9 @@ const getTransactionHistory = async (req, res) => {
     res.status(200).json({
       success: true,
       transactions: history.transactions,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total: history.total,
-        pages: history.pages,
-      },
+      currentPage: parseInt(page),
+      totalPages: history.pages,
+      totalTransactions: history.total,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

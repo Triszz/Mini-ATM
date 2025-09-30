@@ -2,19 +2,33 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { AccountAPI } from "../services/api";
 import { useAuthContext } from "../hooks/useAuthContext";
+
 function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalTransactions, setTotalTransactions] = useState(0);
+
+  const [itemsPerPage] = useState(10);
+
   const { user, isInitialized } = useAuthContext();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchTransactionHistory = async () => {
+  const fetchTransactionHistory = useCallback(
+    async (page = 1) => {
       try {
         setIsLoading(true);
-        const response = await AccountAPI.getTransactionHistory();
+        const response = await AccountAPI.getTransactionHistory(
+          page,
+          itemsPerPage
+        );
+
         setTransactions(response.data.transactions);
+        setCurrentPage(response.data.currentPage);
+        setTotalPages(response.data.totalPages);
+        setTotalTransactions(response.data.totalTransactions);
       } catch (error) {
         const errorMessage =
           error.response?.data?.error ||
@@ -24,17 +38,51 @@ function TransactionHistory() {
       } finally {
         setIsLoading(false);
       }
-    };
+    },
+    [itemsPerPage]
+  );
+
+  useEffect(() => {
     if (!isInitialized) {
       return;
     }
     if (user) {
-      fetchTransactionHistory();
+      fetchTransactionHistory(1);
     } else {
       setError("Please login to continue");
       setIsLoading(false);
     }
-  }, [user, isInitialized]);
+  }, [user, isInitialized, fetchTransactionHistory]);
+
+  const handlePageChange = async (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages && newPage !== currentPage) {
+      setCurrentPage(newPage);
+      await fetchTransactionHistory(newPage);
+    }
+  };
+
+  const getPageNumbers = () => {
+    const delta = 2;
+    const pages = [];
+    const start = Math.max(1, currentPage - delta);
+    const end = Math.min(totalPages, currentPage + delta);
+
+    if (start > 1) {
+      pages.push(1);
+      if (start > 2) pages.push("...");
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (end < totalPages) {
+      if (end < totalPages - 1) pages.push("...");
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
 
   const formatTimestamp = useCallback((mongoTimestamp) => {
     const date = new Date(mongoTimestamp);
@@ -51,13 +99,16 @@ function TransactionHistory() {
     });
     return `${dateString} ${timeString}`;
   }, []);
+
   if (error) {
     return <div className="error">Error: {error}</div>;
   }
+
   if (isLoading) {
     return <div className="loading">Loading...</div>;
   }
-  if (transactions.length === 0) {
+
+  if (totalTransactions === 0) {
     return (
       <div className="empty">
         You don't have any transactions yet. Make your first transaction!
@@ -74,7 +125,17 @@ function TransactionHistory() {
       >
         ← Back to Home
       </button>
-      <h1>Transaction History</h1>
+
+      <div className="history-header">
+        <h1>Transaction History</h1>
+        <div className="transaction-summary">
+          <span>Total: {totalTransactions} transactions</span>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+        </div>
+      </div>
+
       <ul className="transaction-list">
         {transactions.map((transaction) => (
           <li
@@ -98,7 +159,7 @@ function TransactionHistory() {
               transaction.type === "withdrawal"
                 ? "-"
                 : "+"}
-              {transaction.amount}
+              ${transaction.amount}
             </span>
             <span>Status: {transaction.status}</span>
             <span>
@@ -117,7 +178,45 @@ function TransactionHistory() {
           </li>
         ))}
       </ul>
+
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button
+            className="pagination-button"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1 || isLoading}
+          >
+            Previous
+          </button>
+
+          <div className="page-numbers">
+            {getPageNumbers().map((page, index) => (
+              <button
+                key={index}
+                className={`page-number ${
+                  page === currentPage ? "active" : ""
+                } ${page === "..." ? "ellipsis" : ""}`}
+                onClick={() =>
+                  typeof page === "number" && handlePageChange(page)
+                }
+                disabled={page === "..." || page === currentPage || isLoading}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          <button
+            className="pagination-button"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages || isLoading}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 }
+
 export default TransactionHistory;

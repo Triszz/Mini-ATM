@@ -80,9 +80,9 @@ export const AccountAPI = {
     ),
 
   // get transaction history
-  getTransactionHistory: (limit, page, type) =>
+  getTransactionHistory: (page = 1, limit = 10, type) =>
     api.get(`/history`, {
-      params: { limit, page, type },
+      params: { page, limit, type },
       headers: getAuthHeaders(),
     }),
 
