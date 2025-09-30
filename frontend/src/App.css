@@ -287,20 +287,6 @@ input ~ label {
   align-items: flex-start;
 }
 
-/* .transaction-item {
-  display: flex;
-  flex-direction: column;
-  width: max-content;
-  min-width: 200px;
-  max-width: 350px;
-  background-color: rgb(105, 245, 98);
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  background: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-} */
-
 .transaction-item {
   display: flex;
   flex-direction: column;
