@@ -522,6 +522,10 @@ input:focus {
 .empty {
   padding: 20px;
   text-align: center;
+  background: rgba(0, 79, 227, 0.1);
+  width: 100%;
+  color: var(--main-color);
+  border: 1px solid rgba(0, 79, 227, 0.2);
 }
 
 input:disabled {

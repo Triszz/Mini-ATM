@@ -111,6 +111,13 @@ function TransactionHistory() {
   if (totalTransactions === 0) {
     return (
       <div className="empty">
+        <button
+          className="back-button"
+          onClick={() => navigate("/")}
+          disabled={isLoading}
+        >
+          ← Back to Home
+        </button>
         You don't have any transactions yet. Make your first transaction!
       </div>
     );
