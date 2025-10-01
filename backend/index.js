@@ -6,7 +6,7 @@ const accountRouter = require("./routes/account.route");
 require("dotenv").config();
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://mini-atm-r9hy.onrender.com/"],
+  origin: ["http://localhost:5173", "https://mini-atm-r9hy.onrender.com"],
   credentials: true,
   optionsSuccessStatus: 200,
 };
