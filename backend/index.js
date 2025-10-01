@@ -5,10 +5,15 @@ const app = express();
 const accountRouter = require("./routes/account.route");
 require("dotenv").config();
 
+const corsOptions = {
+  origin: ["http://localhost:5173", "https://mini-atm-r9hy.onrender.com/"],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
 // middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use("/api", accountRouter);
 const PORT = process.env.PORT;
