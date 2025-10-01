@@ -56,10 +56,11 @@ function Withdraw() {
         <form className="withdraw-form" onSubmit={handleSubmit}>
           <label>Amount ($): </label>
           <input
-            type="number"
+            type="text"
             min="0"
             className="amount-input"
             value={amount}
+            placeholder="Enter amount (e.g., 50, 100)"
             onChange={(e) => setAmount(e.target.value)}
             disabled={isLoading}
             autoFocus
