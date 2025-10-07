@@ -25,7 +25,7 @@ function Transfer() {
       try {
         if (user) {
           const response = await AccountAPI.getAccount();
-          setContent(`${response.data.username} transfer`);
+          setContent(`${response.data.username} transfers`);
         }
       } catch (error) {
         console.error("Error loading user data:", error);
@@ -61,7 +61,7 @@ function Transfer() {
       setAmount("");
       setPin("");
       const userResponse = await AccountAPI.getAccount();
-      setContent(`${userResponse.data.username} transfer`);
+      setContent(`${userResponse.data.username} transfers`);
     } catch (error) {
       const errorMessage =
         error.response?.data?.error ||
