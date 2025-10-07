@@ -92,7 +92,7 @@ npm run dev
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `POST` | `/api/signup` | Create a new user account |
-| `POST` | `/api/auth/login` | 	Authenticate user and get a JWT token |
+| `POST` | `/api/login` | 	Authenticate user and get a JWT token |
 | `GET` | `/api/` | Get current user's account infomation |
 | `POST` | `/api/withdraw` | Withdrawal |
 | `POST` | `/api/deposit` | Deposit |
