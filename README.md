@@ -54,7 +54,7 @@ Todo-list/
 
 ### 1. Clone Repository
 ```bash
-git clone [https://github.com/Triszz/Simple_ToDo-List.git](https://github.com/Triszz/Mini-ATM.git)
+git clone https://github.com/Triszz/Mini-ATM.git
 cd Mini-ATM
 ```
 
