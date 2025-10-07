@@ -121,6 +121,8 @@ curl -X POST http://localhost:3000/api/transfer \
   + **Recipient Validation**: Ensures the beneficiary account exists within the system.
   + **Balance Verification**: Confirms the sender has sufficient funds to complete the transfer.
 
+## License
+
 This project is open source and available under the [MIT License](LICENSE).
 
 ## Author
