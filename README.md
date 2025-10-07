@@ -67,7 +67,7 @@ npm install
 # and add your environment variables based on .env.example
 # Example:
 # MONGODB_URI=your-mongodb-connection-string
-# PORT=8080
+# PORT=3000
 # JWT_SECRET=your-secret-key
 
 # Start the development server
